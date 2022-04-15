@@ -1,0 +1,44 @@
+#!/bin/sh
+
+if [ ! -n "$1" ];then
+    echo -e "\n第一个参数需要指定elasticsearch.yml文件的位置，绝对路径"
+    exit 1
+fi
+
+if [ ! -n "$2" ];then
+    echo -e "\n第二个参数需要指定data目录的位置，绝对路径"
+    exit 1
+fi
+
+if [ ! -n "$3" ];then
+    echo -e "\n第三个参数需要指定9200端口的映射"
+    exit 1
+fi
+
+if [ ! -n "$4" ];then
+    echo -e "\n第四个参数需要指定9300端口的映射"
+    exit 1
+fi
+
+if [ ! -n "$5" ];then
+    echo -e "\n第五个参数需要指定容器的名字"
+    exit 1
+fi
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+sysctl -w vm.max_map_count=262144
+
+docker run --name $5 \
+	--log-opt max-size=1g \
+	--restart=always \
+	-p $3:$3 \
+	-p $4:$4 \
+	-d \
+	-v $basedir/jvm.options:/usr/share/elasticsearch/config/jvm.options \
+	-v $parentdir/hosts:/etc/hosts \
+	-v $1:/usr/share/elasticsearch/config/elasticsearch.yml \
+	-v $2:/usr/share/elasticsearch/data \
+	example/elasticsearch

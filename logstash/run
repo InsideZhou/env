@@ -1,0 +1,18 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+mkdir -p /var/log/logstash
+chmod -R 777 /var/log/logstash
+
+docker run --name logstash \
+	--log-opt max-size=1g \
+	--network=host \
+	--restart=always \
+	-d \
+	-v $basedir/pipeline/:/usr/share/logstash/pipeline/ \
+	-v $parentdir/hosts:/etc/hosts \
+	docker.elastic.co/logstash/logstash:7.9.0

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+              
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)                                                
+                                                              
+mkdir -p /var/lib/postgresql/data
+mkdir -p /var/log/postgresql
+                                                              
+chmod -R 777 /var/lib/postgresql/data
+chmod -R 777 /var/log/postgresql
+
+docker build -t example/postgresql $basedir

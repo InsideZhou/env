@@ -1,0 +1,16 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+
+docker run --name kibana \
+    --network=host \
+	--restart=always \
+    --log-opt max-size=1g \
+    -d \
+	-v $basedir/kibana.yml:/usr/share/kibana/config/kibana.yml \
+	-v $parentdir/hosts:/etc/hosts \
+	docker.elastic.co/kibana/kibana:7.9.0

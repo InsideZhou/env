@@ -1,0 +1,13 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+sysctl -w vm.max_map_count=262144
+
+mkdir -p /var/lib/elasticsearch/data
+chmod -R 775 /var/lib/elasticsearch/
+
+docker build -t example/elasticsearch $basedir

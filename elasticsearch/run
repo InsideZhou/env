@@ -1,0 +1,20 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+sysctl -w vm.max_map_count=262144
+
+docker run --name elasticsearch \
+	--log-opt max-size=1g \
+	--restart=always \
+	-p 9200:9200 \
+	-p 9300:9300 \
+	-d \
+	-v $basedir/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+	-v $basedir/jvm.options:/usr/share/elasticsearch/config/jvm.options \
+	-v $parentdir/hosts:/etc/hosts \
+	-v /var/lib/elasticsearch/data:/usr/share/elasticsearch/data \
+	example/elasticsearch

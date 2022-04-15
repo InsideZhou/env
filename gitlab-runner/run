@@ -1,0 +1,21 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+docker run \
+    --log-opt max-size=1g \
+    --restart=always \
+    --detach \
+    --name gitlab-runner \
+    --volume $basedir/etc:/etc/gitlab-runner \
+    --volume $basedir/ssh:/home/gitlab-runner/.ssh \
+    --volume $basedir/script:/home/gitlab-runner/script \
+    --volume /var/lib/gitlab-runner:/var/lib/gitlab-runner \
+    --volume /var/lib/gitlab-runner/gradle:/home/gitlab-runner/.gradle \
+    --volume $parentdir/hosts:/etc/hosts \
+    example/gitlab-runner:latest
+
+docker exec -it gitlab-runner /bin/bash -c "chown -R gitlab-runner:gitlab-runner /home/gitlab-runner && chmod go-r /home/gitlab-runner/.ssh/*.pri && chmod u+x /home/gitlab-runner/script/*"

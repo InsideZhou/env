@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ ! -n "$1" ];then
+    echo -e "\n第一个参数需要指定要操作的应用名"
+    exit 1
+fi
+
+if [ ! -n "$2" ];then
+    echo -e "\n第二个参数需要指定应用端口"
+    exit 1
+fi
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+docker run --name $1 \
+    --log-opt max-size=1g \
+    --restart=always \
+    -d \
+    -v $parentdir/hosts:/etc/hosts \
+    -v /opt/app/$1:/opt/$1 \
+    -v /var/lib/$1:/var/lib/$1 \
+    -v /var/log/$1:/var/log/$1 \
+    -p $2:80 \
+    inside/zulu-openjdk:11 \
+    java -jar /opt/$1/app.jar --spring.config.location=classpath:/,file:/opt/$1/ --spring.profiles.active=production

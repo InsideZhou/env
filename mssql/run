@@ -1,0 +1,41 @@
+#!/bin/sh
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+mssql='mssql'
+pid='Developer'
+password='Example2022mssql'
+
+while getopts “n:p:P:” opt ; do
+    case $opt in
+        n)
+            mssql=$OPTARG
+            ;;
+        p)
+            pid=$OPTARG
+            ;;
+        P)
+            password=$OPTARG
+            ;;
+        ?) usage
+            echo "不支持参数 $opt"
+            exit 1
+            ;;
+    esac
+done
+
+mkdir -p /var/lib/mssql
+chmod -R 777 /var/lib/mssql
+
+docker run --name $mssql \
+    -e ACCEPT_EULA=Y \
+    -e SA_PASSWORD=$password \
+    -e MSSQL_PID=$pid \
+    -e MSSQL_COLLATION=Chinese_PRC_CI_AS \
+    --network=host \
+    --restart=always \
+    -d \
+    -v /var/lib/mssql:/var/opt/mssql \
+    mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04

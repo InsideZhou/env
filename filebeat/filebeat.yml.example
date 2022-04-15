@@ -1,0 +1,22 @@
+filebeat.config.modules.reload.enabled: true
+
+filebeat.inputs:
+  - type: log
+    paths: ["/var/log/openresty/access.log"]
+    tags: ["nginx_access"]
+  - type: container
+    paths: ["/var/lib/docker/containers/*/*.log"]
+    tags: ["app"]
+
+processors:
+  - add_host_metadata: ~
+  - add_docker_metadata: ~
+
+filebeat.modules:
+  - module: nginx
+    access.enabled: false
+    error.enabled: true
+    error.var.paths: ["/var/log/openresty/error.log"]
+
+output.logstash.hosts: ["service-2:5044"]
+output.elasticsearch.hosts: ["testing-0:9200", "testing-1:9200", "testing-2:9200"]

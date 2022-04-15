@@ -1,0 +1,7 @@
+server.name: "testing-0"
+server.host: 0.0.0.0
+
+elasticsearch.hosts:
+    - http://testing-0:9200
+    - http://testing-1:9200
+    - http://testing-2:9200

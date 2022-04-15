@@ -1,0 +1,36 @@
+cluster.name: "example-elasticsearch-cluster"
+
+network:
+    bind_host: 0.0.0.0
+    publish_host: 172.26.159.137
+
+http:
+    port: 9201
+    publish_port: 9201
+transport:
+    tcp.port: 9301
+    publish_port: 9301
+
+node.name: "es-3-1"
+node.roles: ["data", "ingest", "ml"]
+node.attr.ilm_phase: "warm"
+
+cluster.fault_detection:
+    follower_check:
+        timeout: 15s
+        retry_count: 4
+    leader_check:
+        timeout: 15s
+        retry_count: 4
+
+discovery.zen.minimum_master_nodes: 3
+
+discovery.seed_hosts:
+    - es-0:9300
+    - es-1:9300
+    - es-2:9300
+    - es-3:9300
+    - es-4:9300
+
+cluster.initial_master_nodes:
+    - es-0

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+
+docker run \
+    --name teamcity-server \
+    --log-opt max-size=1g \
+    --restart=always \
+    --detach \
+    --publish 8111:8111 \
+    -v $parentdir/hosts:/etc/hosts \
+    -v /var/lib/teamcity-server/data:/data/teamcity_server/datadir \
+    jetbrains/teamcity-server

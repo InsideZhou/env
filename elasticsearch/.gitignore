@@ -1,0 +1,3 @@
+elasticsearch.yml
+elasticsearch-*.yml
+jvm.options

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname) 
+
+mkdir -p /var/log/openresty
+chmod -R 777 /var/log/openresty
+
+docker build -t example/openresty $basedir

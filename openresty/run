@@ -1,0 +1,17 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+letsencryptdir=$parentdir/letsencrypt
+hostname=$(hostname) 
+
+docker run --name openresty \
+	--network=host \
+	--restart=always \
+	-d \
+	-v /var/log/openresty:/usr/local/openresty/nginx/logs \
+	-v $basedir/conf:/usr/local/openresty/nginx/conf \
+	-v $basedir/html:/usr/local/openresty/nginx/html \
+	-v $letsencryptdir/live:/usr/local/openresty/nginx/conf/certs/live \
+	example/openresty

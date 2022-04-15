@@ -1,0 +1,21 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+
+mkdir -p /var/lib/yapi/db
+chmod -R 777 /var/lib/yapi/db
+
+
+docker run \
+    --name yapi \
+    --restart=always \
+    --log-opt max-size=1g \
+    --detach \
+    --publish 3000:3000 \
+    --publish 27017 \
+    -v /var/lib/yapi/db:/data/db \
+    example/yapi:latest

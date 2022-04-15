@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+
+mkdir -p /var/lib/gitlab-runner/gradle
+chmod -R 777 /var/lib/gitlab-runner
+
+docker build -t example/gitlab-runner -f $basedir/Dockerfile $basedir

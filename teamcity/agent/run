@@ -1,0 +1,19 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+
+docker run \
+    --name teamcity-agent \
+    --log-opt max-size=1g \
+    --restart=always \
+    --detach \
+    -e SERVER_URL="https://teamcity.example.com" \
+    --user=root \
+    -v $parentdir/../hosts:/etc/hosts \
+    -v /var/lib/teamcity-agent/data:/data/teamcity_agent/conf \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    jetbrains/teamcity-agent

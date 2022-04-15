@@ -1,0 +1,6 @@
+#!/bin/sh
+
+
+rsync -vrL --progress /etc/letsencrypt/live/ /opt/env/letsencrypt/live && \
+	docker exec openresty nginx -t && \
+	docker exec openresty nginx -s reload

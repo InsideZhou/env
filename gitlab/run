@@ -1,0 +1,24 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+mkdir -p /var/lib/gitlab/data
+mkdir -p /var/log/gitlab
+
+chmod -R 777 /var/lib/gitlab/data
+chmod -R 777 /var/log/gitlab
+
+
+docker run \
+    --log-opt max-size=1g \
+    --restart=always \
+    --hostname gitlab.example.com \
+    --detach \
+    --publish 8000:80 --publish 22000:22 \
+    --name gitlab \
+    --volume $basedir/etc:/etc/gitlab \
+    --volume /var/lib/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce:latest

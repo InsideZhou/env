@@ -1,0 +1,24 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+if [ ! -n "$1" ];then
+    echo -e "\n第一个参数需要指定应用端口"
+    exit 1
+fi
+
+mkdir -p /var/lib/nexus
+chmod -R 777 /var/lib/nexus
+
+docker run \
+    --log-opt max-size=1g \
+    --restart=always \
+    --detach \
+    --name nexus \
+    -p $1:8081 \
+    --volume /var/lib/nexus:/nexus-data \
+    --volume $parentdir/hosts:/etc/hosts \
+    sonatype/nexus3:latest

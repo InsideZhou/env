@@ -1,0 +1,16 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)                                                
+
+docker run --name postgresql \
+	--log-opt max-size=1g \
+	--restart=always \
+	--network=host \
+	-d \
+	-v $parentdir/hosts:/etc/hosts \
+	-v $basedir/postgresql.conf:/var/lib/postgresql/data/postgresql.conf \
+	-v /var/lib/postgresql/data:/var/lib/postgresql/data \
+	example/postgresql

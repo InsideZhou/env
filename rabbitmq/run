@@ -1,0 +1,22 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+mkdir -p /var/lib/rabbitmq
+chmod -R 777 /var/lib/rabbitmq
+
+docker run --name rabbitmq \
+	--log-opt max-size=1g \
+	--hostname $hostname \
+	--network=host \
+	--restart=always \
+	-d \
+	-v $parentdir/hosts:/etc/hosts \
+	-v $basedir/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf \
+	-v $basedir/.erlang.cookie:/root/.erlang.cookie \
+	-v $basedir/.erlang.cookie:/var/lib/rabbitmq/.erlang.cookie \
+	-v /var/lib/rabbitmq:/var/lib/rabbitmq \
+	rabbitmq:3-management

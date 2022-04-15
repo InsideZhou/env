@@ -1,0 +1,39 @@
+#!/bin/sh
+
+if [ ! -n "$1" ];then
+    echo -e "\n第一个参数需要指定要操作的应用名"
+    exit 1
+fi
+
+if [ ! -n "$2" ];then
+    echo -e "\n第二个参数需要指定应用端口"
+    exit 1
+fi
+
+if [ ! -n "$3" ];then
+    echo -e "\n第三个参数需要指定应用入口（dotnet XXX）"
+    exit 1
+fi
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname)
+
+mkdir -p /var/lib/$1
+mkdir -p /var/log/$1
+
+chmod -R 777 /var/lib/$1
+chmod -R 777 /var/log/$1
+
+docker run --name $1 \
+    -e ASPNETCORE_ENVIRONMENT=Production \
+    --restart=always \
+    -d \
+    --log-opt max-size=1g \
+    -v $parentdir/hosts:/etc/hosts \
+    -v /opt/app/$1:/opt/$1 \
+    -v /var/lib/$1:/var/lib/$1 \
+    -v /var/log/$1:/var/log/$1 \
+    -p $2:80 \
+    -w /opt/$1 \
+    inside/netcore:3.1 dotnet $3

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+basedir=$(cd `dirname $0`; pwd)
+parentdir=$(cd $basedir; cd ..; pwd)
+hostname=$(hostname) 
+
+mongod --fork --syslog && \
+	cd $basedir/vendors && \
+	npm run install-server
+
+node server/app.js
